@@ -1,0 +1,6 @@
+API Documentation
+Access at: `http://localhost:8002/docs`
+
+## Environment Variables
+- `SECRET_KEY`: JWT secret key
+- `RENDER`: Set to "true" for production

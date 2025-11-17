@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: mt5-simulator
+    env: python
+    buildCommand: pip install -r requirements.txt
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
+      - key: PYTHONUNBUFFERED
+        value: true
+    plan: free

@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaTrader 5 Simulator Dashboard - Multi-Account Edition</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --surface-color: #2c2c2c;
+            --primary-color: #007bff;
+            --text-color: #e0e0e0;
+            --text-muted-color: #888;
+            --green-color: #28a745;
+            --red-color: #dc3545;
+            --orange-color: #ff8800;
+            --border-color: #444;
+            --vip-color: #ffd700;
+            --demo-color: #00bcd4;
+            --pro-color: #9c27b0;
+            --money-color: #4caf50;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px 20px 60px 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .hidden { display: none !important; }
+
+        .card {
+            background-color: var(--surface-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        h1, h2, h3 {
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .badge-new {
+            background-color: var(--orange-color);
+            color: #fff;
+        }
+
+        .badge-account {
+            padding: 6px 12px;
+            font-size: 1em;
+        }
+
+        .badge-vip { background-color: var(--vip-color); color: #000; }
+        .badge-demo { background-color: var(--demo-color); color: #fff; }
+        .badge-pro { background-color: var(--pro-color); color: #fff; }
+        .badge-money { background-color: var(--money-color); color: #fff; }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--text-muted-color);
+        }
+
+        input, select, button, textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        textarea {
+            min-height: 80px;
+            font-family: monospace;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        button:hover { background-color: #0056b3; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button.btn-danger { background-color: var(--red-color); }
+        button.btn-danger:hover { background-color: #a71d2a; }
+        button.btn-close { background-color: #ffc107; color: #1a1a1a; }
+        button.btn-close:hover { background-color: #d39e00; }
+        button.btn-finish { background-color: #17a2b8; }
+        button.btn-finish:hover { background-color: #117a8b; }
+        button.btn-edit { background-color: var(--orange-color); }
+        button.btn-edit:hover { background-color: #cc6600; }
+        button.btn-small {
+            width: auto;
+            padding: 5px 10px;
+            font-size: 0.85em;
+            margin-right: 5px;
+        }
+
+        .account-switcher {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .account-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--border-color);
+            background-color: var(--surface-color);
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .account-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .account-btn.active {
+            border-width: 3px;
+        }
+
+        .account-btn.vip.active { border-color: var(--vip-color); color: var(--vip-color); }
+        .account-btn.demo.active { border-color: var(--demo-color); color: var(--demo-color); }
+        .account-btn.pro.active { border-color: var(--pro-color); color: var(--pro-color); }
+        .account-btn.money.active { border-color: var(--money-color); color: var(--money-color); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        thead {
+            background-color: #333;
+        }
+
+        .profit { color: var(--green-color); }
+        .loss { color: var(--red-color); }
+        
+        .buy { color: var(--green-color); font-weight: bold; }
+        .sell { color: var(--red-color); font-weight: bold; }
+
+        #account-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            text-align: center;
+        }
+
+        #account-metrics div {
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 6px;
+        }
+        
+        #account-metrics span {
+            display: block;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        #status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--surface-color);
+            padding: 8px 20px;
+            font-size: 0.9em;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            z-index: 1000;
+        }
+        .ws-status-connected { color: var(--green-color); }
+        .ws-status-disconnected { color: var(--red-color); }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            color: var(--text-muted-color);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: var(--text-color);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background-color: var(--bg-color);
+        }
+
+        .tab.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .info-box {
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .info-box-warning {
+            border-left-color: var(--orange-color);
+        }
+
+        .info-box-danger {
+            border-left-color: var(--red-color);
+        }
+
+        .accounts-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .account-card {
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+
+        .account-card.vip { border-left-color: var(--vip-color); }
+        .account-card.demo { border-left-color: var(--demo-color); }
+        .account-card.pro { border-left-color: var(--pro-color); }
+        .account-card.money { border-left-color: var(--money-color); }
+
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="card">
+            <div class="header-flex">
+                <div>
+                    <h1>🚀 MT5 Multi-Account Simulator 
+                        <span class="badge badge-new">Multi-Account</span>
+                        <span id="current-account-badge" class="badge badge-account badge-vip">VIP</span>
+                    </h1>
+                    <p style="margin: 0; color: var(--text-muted-color);">Complete Multi-Account Trading Platform</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="card">
+            <h2>💼 Account Switcher</h2>
+            <div class="account-switcher">
+                <button class="account-btn vip active" data-account="VIP">🌟 VIP</button>
+                <button class="account-btn demo" data-account="DEMO">🔍 DEMO</button>
+                <button class="account-btn pro" data-account="PRO">⚡ PRO</button>
+                <button class="account-btn money" data-account="MONEY">💰 MONEY</button>
+            </div>
+            <button id="view-all-accounts-btn" class="btn-finish">📊 View All Accounts Overview</button>
+        </div>
+
+        <div class="card">
+            <h2>📊 Account Metrics - <span id="metrics-account-name">VIP</span></h2>
+            <div id="account-metrics">
+                <div>Balance <span id="metric-balance">$0.00</span></div>
+                <div>Equity <span id="metric-equity">$0.00</span></div>
+                <div>Profit <span id="metric-profit">$0.00</span></div>
+                <div>Margin <span id="metric-margin">$0.00</span></div>
+                <div>Free Margin <span id="metric-free-margin">$0.00</span></div>
+                <div>Margin Level <span id="metric-margin-level">0.00%</span></div>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <div id="controls-column">
+                <div class="card">
+                    <h3>📈 Start New Trade</h3>
+                    <form id="start-trade-form">
+                        <div class="form-group">
+                            <label for="trade-symbol">Currency Pair</label>
+                            <select id="trade-symbol" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="trade-direction">Direction</label>
+                            <select id="trade-direction" required>
+                                <option value="BUY">BUY</option>
+                                <option value="SELL">SELL</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="trade-lot-size">Lot Size (Optional)</label>
+                            <input type="number" id="trade-lot-size" step="0.01" min="0.01" placeholder="e.g., 0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="trade-starting-buy-price">Starting Buy Price (Optional, BUY only)</label>
+                            <input type="number" id="trade-starting-buy-price" step="0.00001" placeholder="e.g., 1.1726">
+                        </div>
+                        <div class="form-group">
+                            <label for="trade-target-type">Target Type (Optional)</label>
+                            <select id="trade-target-type">
+                                <option value="">Use Default</option>
+                                <option value="PROFIT">Profit</option>
+                                <option value="LOSS">Loss</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="trade-target-amount">Target Amount USD (Optional)</label>
+                            <input type="number" id="trade-target-amount" step="0.01" min="0" placeholder="e.g., 100">
+                        </div>
+                        <button type="submit">Start Trade</button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h3>🔥 Trade Database Manager <span class="badge badge-new">NEW</span></h3>
+                    <div class="info-box info-box-warning">
+                        <strong>⚠️ Admin Feature:</strong> Update historical trades directly in the database. Changes are permanent!
+                    </div>
+                    <button id="open-trade-manager-btn" class="btn-edit">Open Trade Manager</button>
+                </div>
+
+                <div class="card">
+                    <h3>🌍 Timezone Settings</h3>
+                    <div class="form-group">
+                        <label for="timezone-select">System Timezone</label>
+                        <select id="timezone-select">
+                            <option value="UTC">UTC</option>
+                            <option value="America/New_York">America/New_York</option>
+                            <option value="America/Chicago">America/Chicago</option>
+                            <option value="America/Los_Angeles">America/Los_Angeles</option>
+                            <option value="Europe/London">Europe/London</option>
+                            <option value="Europe/Paris">Europe/Paris</option>
+                            <option value="Asia/Tokyo">Asia/Tokyo</option>
+                            <option value="Asia/Shanghai">Asia/Shanghai</option>
+                            <option value="Africa/Kampala">Africa/Kampala</option>
+                        </select>
+                        <button id="set-timezone-btn" style="margin-top: 10px;">Set Timezone</button>
+                    </div>
+                    <div id="current-timezone-display" style="margin-top: 10px; color: var(--text-muted-color);"></div>
+                </div>
+
+                <div class="card">
+                    <h3>⚙️ Administration</h3>
+                    <div class="form-group">
+                        <label for="license-key">License Key</label>
+                        <input type="text" id="license-key" value="1234">
+                        <button id="verify-license-btn" style="margin-top: 10px;">Verify License</button>
+                    </div>
+                    <hr style="border-color: var(--border-color);">
+                    <div class="form-group">
+                        <label for="new-balance">Set New Balance</label>
+                        <input type="number" id="new-balance" placeholder="e.g., 5000" step="0.01">
+                        <button id="set-balance-btn" style="margin-top: 10px;">Set Balance</button>
+                    </div>
+                    <hr style="border-color: var(--border-color);">
+                    <button id="deposit-btn" class="btn-finish">Deposit $300.00</button>
+                    <hr style="border-color: var(--border-color);">
+                    <button id="reset-account-btn" class="btn-danger">Reset Account & Trades</button>
+                </div>
+            </div>
+
+            <div id="data-column">
+                <div class="card">
+                    <h3>🟢 Active Trades</h3>
+                    <table id="active-trades-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Symbol</th>
+                                <th>Direction</th>
+                                <th>Lot</th>
+                                <th>Entry</th>
+                                <th>Current</th>
+                                <th>P/L ($)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3>📜 Historical Trades</h3>
+                    <button id="refresh-historical-btn" class="btn-small btn-finish" style="margin-bottom: 10px;">🔄 Refresh</button>
+                    <table id="historical-trades-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Symbol</th>
+                                <th>Direction</th>
+                                <th>Lot</th>
+                                <th>Entry</th>
+                                <th>Close</th>
+                                <th>P/L ($)</th>
+                                <th>Closed At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Accounts Overview Modal -->
+    <div id="all-accounts-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 All Accounts Overview</h2>
+                <span class="modal-close" id="close-all-accounts-modal">&times;</span>
+            </div>
+            <div class="accounts-overview" id="accounts-overview"></div>
+        </div>
+    </div>
+
+    <!-- Trade Manager Modal -->
+    <div id="trade-manager-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔥 Trade Database Manager</h2>
+                <span class="modal-close" id="close-trade-manager-modal">&times;</span>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="update">Update Trade</div>
+                <div class="tab" data-tab="bulk">Bulk Update</div>
+                <div class="tab" data-tab="recalculate">Recalculate P&L</div>
+            </div>
+
+            <div id="update-tab" class="tab-content active">
+                <div class="info-box">
+                    <strong>📝 Update Trade:</strong> Modify historical trade data including prices and timestamps.
+                </div>
+                <form id="update-trade-form">
+                    <div class="form-group">
+                        <label for="update-trade-id">Trade ID *</label>
+                        <input type="text" id="update-trade-id" required placeholder="Enter trade ID from historical trades">
+                    </div>
+                    <div class="form-group">
+                        <label for="update-entry-price">Entry Price</label>
+                        <input type="number" id="update-entry-price" step="0.00001" placeholder="Leave empty to keep current">
+                    </div>
+                    <div class="form-group">
+                        <label for="update-closing-price">Closing Price</label>
+                        <input type="number" id="update-closing-price" step="0.00001" placeholder="Leave empty to keep current">
+                    </div>
+                    <div class="form-group">
+                        <label for="update-start-time">Start Time (ISO format)</label>
+                        <input type="datetime-local" id="update-start-time">
+                    </div>
+                    <div class="form-group">
+                        <label for="update-end-time">End Time (ISO format)</label>
+                        <input type="datetime-local" id="update-end-time">
+                    </div>
+                    <div class="form-group">
+                        <label for="update-lot-size">Lot Size</label>
+                        <input type="number" id="update-lot-size" step="0.01" placeholder="Leave empty to keep current">
+                    </div>
+                    <div class="form-group">
+                        <label for="update-profit-loss">Profit/Loss (Manual Override)</label>
+                        <input type="number" id="update-profit-loss" step="0.01" placeholder="Leave empty to keep current">
+                    </div>
+                    <button type="submit">Update Trade</button>
+                </form>
+            </div>
+
+            <div id="bulk-tab" class="tab-content">
+                <div class="info-box info-box-warning">
+                    <strong>⚡ Bulk Update:</strong> Update multiple trades at once. Provide JSON array.
+                </div>
+                <form id="bulk-update-form">
+                    <div class="form-group">
+                        <label for="bulk-update-json">JSON Array (Example below)</label>
+                        <textarea id="bulk-update-json" placeholder='[{"trade_id": "xxx", "updates": {"closing_price": 1.1730}}, ...]'></textarea>
+                        <small style="color: var(--text-muted-color);">
+                            Example: [{"trade_id": "abc-123", "updates": {"entry_price": 1.1720, "closing_price": 1.1730}}]
+                        </small>
+                    </div>
+                    <button type="submit">Execute Bulk Update</button>
+                </form>
+            </div>
+
+            <div id="recalculate-tab" class="tab-content">
+                <div class="info-box">
+                    <strong>🔢 Recalculate P&L:</strong> Automatically recalculate profit/loss based on entry and closing prices.
+                </div>
+                <form id="recalculate-form">
+                    <div class="form-group">
+                        <label for="recalc-trade-id">Trade ID *</label>
+                        <input type="text" id="recalc-trade-id" required placeholder="Enter trade ID">
+                    </div>
+                    <button type="submit">Recalculate P&L</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Trade Modal -->
+    <div id="edit-trade-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Edit Historical Trade</h2>
+                <span class="modal-close" id="close-edit-modal">&times;</span>
+            </div>
+            <form id="quick-edit-form">
+                <input type="hidden" id="edit-trade-id">
+                <div class="form-group">
+                    <label>Symbol: <span id="edit-symbol"></span></label>
+                </div>
+                <div class="form-group">
+                    <label for="edit-entry-price">Entry Price</label>
+                    <input type="number" id="edit-entry-price" step="0.00001" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-closing-price">Closing Price</label>
+                    <input type="number" id="edit-closing-price" step="0.00001" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-profit-loss">Profit/Loss ($) - Manual Override</label>
+                    <input type="number" id="edit-profit-loss" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-start-time">Start Time</label>
+                    <input type="datetime-local" id="edit-start-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-end-time">End Time</label>
+                    <input type="datetime-local" id="edit-end-time" required>
+                </div>
+                <button type="submit">Save Changes</button>
+                <button type="button" id="recalc-after-edit-btn" class="btn-finish">Save & Recalculate P&L</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="status-bar">
+        <div id="ws-status">WebSocket: <span class="ws-status-disconnected">Disconnected</span></div>
+        <div id="log-message">Welcome to the multi-account simulator!</div>
+    </div>
+
+    <script>
+        // API and WebSocket configuration
+        const getApiUrls = () => {
+            // Always connect to the backend server directly
+            const host = window.location.hostname || 'localhost';
+            const port = window.location.port || '8002';
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const httpProtocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+            
+            return {
+                apiBaseUrl: `${httpProtocol}//${host}:${port}`,
+                wsBaseUrl: `${protocol}//${host}:${port}`  // Match the backend server port
+            };
+        };
+
+        const urls = getApiUrls();
+        const state = {
+            websocket: null,
+            apiBaseUrl: urls.apiBaseUrl,
+            wsBaseUrl: urls.wsBaseUrl,
+            clientId: `client_${Date.now()}`,
+            currentAccount: 'VIP',
+            reconnectAttempts: 0,
+            maxReconnectAttempts: 5
+        };
+
+        const formatCurrency = (value) => {
+            if (typeof value !== 'number') value = parseFloat(value) || 0;
+            const sign = value < 0 ? "-$" : "$";
+            return `${sign}${Math.abs(value).toFixed(2)}`;
+        };
+
+        const logMessage = (message, type = 'info') => {
+            const logEl = document.getElementById('log-message');
+            logEl.textContent = message;
+            logEl.className = type === 'error' ? 'loss' : (type === 'success' ? 'profit' : '');
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        };
+
+        const updateCurrentAccountBadge = (account) => {
+            const badge = document.getElementById('current-account-badge');
+            const metricsName = document.getElementById('metrics-account-name');
+            badge.textContent = account;
+            metricsName.textContent = account;
+            badge.className = `badge badge-account badge-${account.toLowerCase()}`;
+        };
+
+        const updateAccountMetricsUI = (metrics) => {
+            document.getElementById('metric-balance').textContent = formatCurrency(metrics.balance);
+            document.getElementById('metric-equity').textContent = formatCurrency(metrics.equity);
+            document.getElementById('metric-margin').textContent = formatCurrency(metrics.margin);
+            document.getElementById('metric-free-margin').textContent = formatCurrency(metrics.free_margin);
+            document.getElementById('metric-margin-level').textContent = `${(metrics.margin_level || 0).toFixed(2)}%`;
+            
+            const profitEl = document.getElementById('metric-profit');
+            profitEl.textContent = formatCurrency(metrics.profit);
+            profitEl.className = metrics.profit >= 0 ? 'profit' : 'loss';
+        };
+
+        const renderActiveTrades = (trades) => {
+            const tbody = document.querySelector('#active-trades-table tbody');
+            tbody.innerHTML = '';
+            if (trades.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted-color);">No active trades</td></tr>';
+                return;
+            }
+            trades.forEach(trade => {
+                const currentPrice = trade.trade_direction === 'BUY' ? trade.current_sell_price : trade.current_buy_price;
+                const pnlClass = trade.profit_loss >= 0 ? 'profit' : 'loss';
+                const directionClass = trade.trade_direction.toLowerCase();
+                
+                const row = document.createElement('tr');
+                row.id = `trade-${trade.trade_id}`;
+                row.innerHTML = `
+                    <td>${trade.trade_id}</td>
+                    <td>${trade.symbol}</td>
+                    <td class="${directionClass}">${trade.trade_direction}</td>
+                    <td>${trade.lot_size.toFixed(2)}</td>
+                    <td>${trade.entry_price.toFixed(5)}</td>
+                    <td class="current-price">${currentPrice.toFixed(5)}</td>
+                    <td class="pnl ${pnlClass}">${formatCurrency(trade.profit_loss)}</td>
+                    <td>
+                        <button class="btn-close btn-small" onclick="closeTrade('${trade.trade_id}')">Close</button>
+                        <button class="btn-finish btn-small" onclick="finishTrade('${trade.trade_id}')">Finish</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        };
+        
+        const updateActiveTradeRow = (tradeUpdate) => {
+            const row = document.getElementById(`trade-${tradeUpdate.trade_id}`);
+            if (!row) return;
+
+            const currentPrice = tradeUpdate.direction === 'BUY' ? tradeUpdate.ask : tradeUpdate.bid;
+            const pnlClass = tradeUpdate.profit >= 0 ? 'profit' : 'loss';
+
+            row.querySelector('.current-price').textContent = currentPrice.toFixed(5);
+            const pnlCell = row.querySelector('.pnl');
+            pnlCell.textContent = formatCurrency(tradeUpdate.profit);
+            pnlCell.className = `pnl ${pnlClass}`;
+        };
+
+        const renderHistoricalTrades = (trades) => {
+            const tbody = document.querySelector('#historical-trades-table tbody');
+            tbody.innerHTML = '';
+            if (trades.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted-color);">No historical trades</td></tr>';
+                return;
+            }
+            trades.forEach(trade => {
+                const pnlClass = trade.profit_loss >= 0 ? 'profit' : 'loss';
+                const directionClass = trade.trade_direction.toLowerCase();
+                const closePrice = trade.closing_price ?? (trade.trade_direction === 'BUY' ? trade.current_sell_price : trade.current_buy_price);
+                const endTime = trade.end_time ? new Date(trade.end_time).toLocaleString() : '—';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${trade.trade_id}</td>
+                    <td>${trade.symbol}</td>
+                    <td class="${directionClass}">${trade.trade_direction}</td>
+                    <td>${trade.lot_size.toFixed(2)}</td>
+                    <td>${trade.entry_price.toFixed(5)}</td>
+                    <td>${closePrice.toFixed(5)}</td>
+                    <td class="${pnlClass}">${formatCurrency(trade.profit_loss)}</td>
+                    <td>${endTime}</td>
+                    <td>
+                        <button class="btn-edit btn-small" onclick='openEditModal(${JSON.stringify(trade)})'>Edit</button>
+                        <button class="btn-danger btn-small" onclick="deleteTrade('${trade.trade_id}')">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        };
+
+        const apiFetch = async (endpoint, options = {}) => {
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers,
+            };
+
+            try {
+                const response = await fetch(`${state.apiBaseUrl}${endpoint}`, { ...options, headers });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ detail: 'An unknown error occurred' }));
+                    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            } catch (error) {
+                console.error('API Fetch Error:', error);
+                throw error;
+            }
+        };
+        
+        const fetchInitialData = async () => {
+            try {
+                const [metrics, active, historical, pairs, timezone] = await Promise.all([
+                    apiFetch('/api/account-metrics'),
+                    apiFetch('/api/trades/active'),
+                    apiFetch('/api/trades/historical'),
+                    apiFetch('/api/currency-pairs'),
+                    apiFetch('/api/timezone')
+                ]);
+                
+                updateAccountMetricsUI(metrics);
+                renderActiveTrades(active);
+                renderHistoricalTrades(historical);
+
+                const symbolSelect = document.getElementById('trade-symbol');
+                symbolSelect.innerHTML = Object.keys(pairs.data).map(symbol => `<option value="${symbol}">${symbol}</option>`).join('');
+                
+                const timezoneSelect = document.getElementById('timezone-select');
+                timezoneSelect.value = timezone.timezone;
+                document.getElementById('current-timezone-display').textContent = `Current: ${timezone.current_time}`;
+                
+                logMessage('Data loaded successfully', 'success');
+            } catch (error) {
+                logMessage(`Error fetching initial data: ${error.message}`, 'error');
+            }
+        };
+
+        const switchAccount = async (accountType) => {
+            try {
+                const result = await apiFetch('/api/switch-account', {
+                    method: 'POST',
+                    body: JSON.stringify({ account_type: accountType }),
+                });
+                
+                state.currentAccount = accountType;
+                updateCurrentAccountBadge(accountType);
+                
+                document.querySelectorAll('.account-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`.account-btn[data-account="${accountType}"]`).classList.add('active');
+                
+                await fetchInitialData();
+                logMessage(result.message, 'success');
+            } catch (error) {
+                logMessage(`Failed to switch account: ${error.message}`, 'error');
+            }
+        };
+
+        const fetchAllAccounts = async () => {
+            try {
+                const result = await apiFetch('/api/accounts/list');
+                const container = document.getElementById('accounts-overview');
+                container.innerHTML = '';
+                
+                for (const [accountType, info] of Object.entries(result.accounts)) {
+                    const card = document.createElement('div');
+                    card.className = `account-card ${accountType.toLowerCase()}`;
+                    card.innerHTML = `
+                        <h3>${accountType}</h3>
+                        <p><strong>Balance:</strong> ${formatCurrency(info.balance)}</p>
+                        <p><strong>Equity:</strong> ${formatCurrency(info.equity)}</p>
+                        <p><strong>Active Trades:</strong> ${info.active_trades}</p>
+                        <p><strong>Margin:</strong> ${formatCurrency(info.margin)}</p>
+                        <p><strong>Free Margin:</strong> ${formatCurrency(info.free_margin)}</p>
+                    `;
+                    container.appendChild(card);
+                }
+                
+                document.getElementById('all-accounts-modal').classList.add('show');
+            } catch (error) {
+                logMessage(`Failed to fetch accounts: ${error.message}`, 'error');
+            }
+        };
+
+        const connectWebSocket = () => {
+            if (state.websocket && state.websocket.readyState === WebSocket.OPEN) {
+                return;
+            }
+
+            const wsUrl = `${state.wsBaseUrl}/ws/${state.clientId}`;
+            state.websocket = new WebSocket(wsUrl);
+
+            state.websocket.onopen = () => {
+                logMessage('WebSocket connected', 'success');
+                document.querySelector('#ws-status span').textContent = 'Connected';
+                document.querySelector('#ws-status span').className = 'ws-status-connected';
+                state.reconnectAttempts = 0;
+            };
+
+            state.websocket.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    switch (data.type) {
+                        case 'price_update':
+                            if (data.account_type === state.currentAccount) {
+                                updateActiveTradeRow(data);
+                                if (data.account_metrics) {
+                                    updateAccountMetricsUI(data.account_metrics);
+                                }
+                            }
+                            break;
+                        case 'trade_completed':
+                        case 'trade_stopped':
+                            if (data.account_type === state.currentAccount) {
+                                logMessage(`Trade ${data.trade_id} ${data.status}: ${data.reason}`, 'success');
+                                fetchInitialData();
+                            }
+                            break;
+                        case 'account_switched':
+                            logMessage(`Account switched from ${data.old_account} to ${data.new_account}`, 'success');
+                            break;
+                        case 'account_reset':
+                            if (data.account_type === state.currentAccount) {
+                                logMessage(data.message, 'success');
+                                fetchInitialData();
+                            }
+                            break;
+                        case 'timezone_changed':
+                            logMessage(`Timezone changed to ${data.new_timezone}`, 'success');
+                            break;
+                        case 'deposit':
+                            if (data.account_type === state.currentAccount) {
+                                logMessage(`Deposited ${data.amount}`, 'success');
+                            }
+                            break;
+                        case 'trade_database_updated':
+                            if (data.account_type === state.currentAccount) {
+                                logMessage(`Trade ${data.trade_id} updated in database`, 'success');
+                                fetchInitialData();
+                            }
+                            break;
+                        case 'trade_deleted':
+                            if (data.account_type === state.currentAccount) {
+                                logMessage(`Trade ${data.trade_id} deleted`, 'success');
+                                fetchInitialData();
+                            }
+                            break;
+                        case 'connection_established':
+                            logMessage(`Connected as ${data.role} - Account: ${data.current_account}`, 'success');
+                            break;
+                        case 'pong':
+                            // Heartbeat response
+                            break;
+                    }
+                } catch (error) {
+                    console.error('WebSocket message error:', error);
+                }
+            };
+
+            state.websocket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                logMessage('WebSocket error occurred', 'error');
+            };
+
+            state.websocket.onclose = () => {
+                logMessage('WebSocket disconnected', 'error');
+                document.querySelector('#ws-status span').textContent = 'Disconnected';
+                document.querySelector('#ws-status span').className = 'ws-status-disconnected';
+                
+                if (state.reconnectAttempts < state.maxReconnectAttempts) {
+                    state.reconnectAttempts++;
+                    setTimeout(() => {
+                        logMessage(`Reconnecting... (${state.reconnectAttempts}/${state.maxReconnectAttempts})`, 'info');
+                        connectWebSocket();
+                    }, 3000);
+                }
+            };
+
+            // Heartbeat
+            setInterval(() => {
+                if (state.websocket && state.websocket.readyState === WebSocket.OPEN) {
+                    state.websocket.send(JSON.stringify({ type: 'ping' }));
+                }
+            }, 30000);
+        };
+
+        // Event Handlers
+        const closeTrade = async (tradeId) => {
+            if (!confirm(`Close trade ${tradeId}?`)) return;
+            try {
+                const result = await apiFetch(`/api/trades/${tradeId}/close`, { method: 'POST' });
+                logMessage(result.message, 'success');
+                await fetchInitialData();
+            } catch (error) {
+                logMessage(`Failed to close trade: ${error.message}`, 'error');
+            }
+        };
+
+        const finishTrade = async (tradeId) => {
+            if (!confirm(`Apply bias to finish trade ${tradeId} faster?`)) return;
+            try {
+                const result = await apiFetch(`/api/trades/${tradeId}/finish`, { method: 'POST' });
+                logMessage(result.message, 'success');
+            } catch (error) {
+                logMessage(`Failed to finish trade: ${error.message}`, 'error');
+            }
+        };
+
+        const deleteTrade = async (tradeId) => {
+            if (!confirm(`Permanently delete trade ${tradeId}? This cannot be undone!`)) return;
+            try {
+                const result = await apiFetch(`/api/trades/${tradeId}`, { method: 'DELETE' });
+                logMessage(result.message, 'success');
+                await fetchInitialData();
+            } catch (error) {
+                logMessage(`Failed to delete trade: ${error.message}`, 'error');
+            }
+        };
+
+        const openEditModal = (trade) => {
+            document.getElementById('edit-trade-id').value = trade.trade_id;
+            document.getElementById('edit-symbol').textContent = trade.symbol;
+            document.getElementById('edit-entry-price').value = trade.entry_price;
+            document.getElementById('edit-closing-price').value = trade.closing_price || '';
+            document.getElementById('edit-profit-loss').value = trade.profit_loss;
+            
+            if (trade.start_time) {
+                const startTime = new Date(trade.start_time).toISOString().slice(0, 16);
+                document.getElementById('edit-start-time').value = startTime;
+            }
+            if (trade.end_time) {
+                const endTime = new Date(trade.end_time).toISOString().slice(0, 16);
+                document.getElementById('edit-end-time').value = endTime;
+            }
+            
+            document.getElementById('edit-trade-modal').classList.add('show');
+        };
+
+        // Form Handlers
+        document.getElementById('start-trade-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const symbol = document.getElementById('trade-symbol').value;
+            const direction = document.getElementById('trade-direction').value;
+            const lotSize = document.getElementById('trade-lot-size').value;
+            const startingBuyPrice = document.getElementById('trade-starting-buy-price').value;
+            const targetType = document.getElementById('trade-target-type').value;
+            const targetAmount = document.getElementById('trade-target-amount').value;
+            
+            const payload = {
+                direction,
+                lot_size: lotSize ? parseFloat(lotSize) : null,
+                starting_buy_price: startingBuyPrice ? parseFloat(startingBuyPrice) : null,
+                target_type: targetType || null,
+                target_amount: targetAmount ? parseFloat(targetAmount) : null
+            };
+            
+            try {
+                const result = await apiFetch(`/api/trades/start/${symbol}`, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                logMessage(result.message, 'success');
+                await fetchInitialData();
+                e.target.reset();
+            } catch (error) {
+                logMessage(`Failed to start trade: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('update-trade-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const tradeId = document.getElementById('update-trade-id').value;
+            const payload = {};
+            
+            const entryPrice = document.getElementById('update-entry-price').value;
+            if (entryPrice) payload.entry_price = parseFloat(entryPrice);
+            
+            const closingPrice = document.getElementById('update-closing-price').value;
+            if (closingPrice) payload.closing_price = parseFloat(closingPrice);
+            
+            const startTime = document.getElementById('update-start-time').value;
+            if (startTime) payload.start_time = new Date(startTime).toISOString();
+            
+            const endTime = document.getElementById('update-end-time').value;
+            if (endTime) payload.end_time = new Date(endTime).toISOString();
+            
+            const lotSize = document.getElementById('update-lot-size').value;
+            if (lotSize) payload.lot_size = parseFloat(lotSize);
+            
+            const profitLoss = document.getElementById('update-profit-loss').value;
+            if (profitLoss) payload.profit_loss = parseFloat(profitLoss);
+            
+            try {
+                const result = await apiFetch(`/api/trades/${tradeId}/update`, {
+                    method: 'PUT',
+                    body: JSON.stringify(payload)
+                });
+                logMessage(result.message, 'success');
+                await fetchInitialData();
+                e.target.reset();
+            } catch (error) {
+                logMessage(`Failed to update trade: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('bulk-update-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const jsonText = document.getElementById('bulk-update-json').value;
+            
+            try {
+                const trades = JSON.parse(jsonText);
+                const result = await apiFetch('/api/trades/bulk-update', {
+                    method: 'POST',
+                    body: JSON.stringify({ trades })
+                });
+                logMessage(result.message, 'success');
+                await fetchInitialData();
+                e.target.reset();
+            } catch (error) {
+                logMessage(`Failed to bulk update: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('recalculate-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const tradeId = document.getElementById('recalc-trade-id').value;
+            
+            try {
+                const result = await apiFetch(`/api/trades/${tradeId}/recalculate`, {
+                    method: 'POST'
+                });
+                logMessage(result.message, 'success');
+                await fetchInitialData();
+                e.target.reset();
+            } catch (error) {
+                logMessage(`Failed to recalculate: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('quick-edit-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const tradeId = document.getElementById('edit-trade-id').value;
+            const payload = {
+                entry_price: parseFloat(document.getElementById('edit-entry-price').value),
+                closing_price: parseFloat(document.getElementById('edit-closing-price').value),
+                profit_loss: parseFloat(document.getElementById('edit-profit-loss').value),
+                start_time: new Date(document.getElementById('edit-start-time').value).toISOString(),
+                end_time: new Date(document.getElementById('edit-end-time').value).toISOString()
+            };
+            
+            try {
+                const result = await apiFetch(`/api/trades/${tradeId}/update`, {
+                    method: 'PUT',
+                    body: JSON.stringify(payload)
+                });
+                logMessage(result.message, 'success');
+                document.getElementById('edit-trade-modal').classList.remove('show');
+                await fetchInitialData();
+            } catch (error) {
+                logMessage(`Failed to update trade: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('recalc-after-edit-btn').addEventListener('click', async () => {
+            const tradeId = document.getElementById('edit-trade-id').value;
+            const payload = {
+                entry_price: parseFloat(document.getElementById('edit-entry-price').value),
+                closing_price: parseFloat(document.getElementById('edit-closing-price').value),
+                start_time: new Date(document.getElementById('edit-start-time').value).toISOString(),
+                end_time: new Date(document.getElementById('edit-end-time').value).toISOString()
+            };
+            
+            try {
+                await apiFetch(`/api/trades/${tradeId}/update`, {
+                    method: 'PUT',
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await apiFetch(`/api/trades/${tradeId}/recalculate`, {
+                    method: 'POST'
+                });
+                
+                logMessage('Trade updated and P&L recalculated', 'success');
+                document.getElementById('edit-trade-modal').classList.remove('show');
+                await fetchInitialData();
+            } catch (error) {
+                logMessage(`Failed to update and recalculate: ${error.message}`, 'error');
+            }
+        });
+
+        // Button Event Listeners
+        document.querySelectorAll('.account-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchAccount(btn.dataset.account));
+        });
+
+        document.getElementById('view-all-accounts-btn').addEventListener('click', fetchAllAccounts);
+
+        document.getElementById('refresh-historical-btn').addEventListener('click', fetchInitialData);
+
+        document.getElementById('verify-license-btn').addEventListener('click', async () => {
+            const licenseKey = document.getElementById('license-key').value;
+            try {
+                const result = await apiFetch('/api/verify-license', {
+                    method: 'POST',
+                    body: JSON.stringify({ license_key: licenseKey })
+                });
+                logMessage(result.message, 'success');
+            } catch (error) {
+                logMessage(`License verification failed: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('set-balance-btn').addEventListener('click', async () => {
+            const newBalance = document.getElementById('new-balance').value;
+            if (!newBalance) {
+                logMessage('Please enter a balance amount', 'error');
+                return;
+            }
+            
+            try {
+                const result = await apiFetch('/api/account/balance', {
+                    method: 'PUT',
+                    body: JSON.stringify({ balance: parseFloat(newBalance) })
+                });
+                logMessage(`Balance set to ${formatCurrency(result.balance)}`, 'success');
+                await fetchInitialData();
+            } catch (error) {
+                logMessage(`Failed to set balance: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('deposit-btn').addEventListener('click', async () => {
+            try {
+                const result = await apiFetch('/api/account/deposit', { method: 'POST' });
+                logMessage(result.message, 'success');
+                await fetchInitialData();
+            } catch (error) {
+                logMessage(`Failed to deposit: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('reset-account-btn').addEventListener('click', async () => {
+            if (!confirm('Reset account and delete all trades? This cannot be undone!')) return;
+            
+            try {
+                const result = await apiFetch('/api/reset', { method: 'POST' });
+                logMessage(result.message, 'success');
+                await fetchInitialData();
+            } catch (error) {
+                logMessage(`Failed to reset account: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('set-timezone-btn').addEventListener('click', async () => {
+            const timezone = document.getElementById('timezone-select').value;
+            
+            try {
+                const result = await apiFetch('/api/timezone', {
+                    method: 'PUT',
+                    body: JSON.stringify({ timezone })
+                });
+                logMessage(result.message, 'success');
+                document.getElementById('current-timezone-display').textContent = `Current: ${result.current_time}`;
+            } catch (error) {
+                logMessage(`Failed to set timezone: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('open-trade-manager-btn').addEventListener('click', () => {
+            document.getElementById('trade-manager-modal').classList.add('show');
+        });
+
+        // Modal Controls
+        document.getElementById('close-trade-manager-modal').addEventListener('click', () => {
+            document.getElementById('trade-manager-modal').classList.remove('show');
+        });
+
+        document.getElementById('close-edit-modal').addEventListener('click', () => {
+            document.getElementById('edit-trade-modal').classList.remove('show');
+        });
+
+        document.getElementById('close-all-accounts-modal').addEventListener('click', () => {
+            document.getElementById('all-accounts-modal').classList.remove('show');
+        });
+
+        // Tab Switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+            });
+        });
+
+        // Close modals on outside click
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            logMessage('Initializing application...', 'info');
+            await fetchInitialData();
+            connectWebSocket();
+        });
+    </script>
+</body>
+</html>
