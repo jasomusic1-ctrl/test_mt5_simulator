@@ -10,6 +10,7 @@ try:
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, HTTPBearer, HTTPAuthorizationCredentials
     from fastapi.responses import HTMLResponse
+    from fastapi.staticfiles import StaticFiles
     from jose import JWTError, jwt
     import hashlib
     from datetime import datetime, timedelta, timezone
@@ -56,6 +57,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files (frontend) at root
+# During Render build, frontend.html is copied to static/index.html
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_dir):
+    app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
 # Database setup - separate database for each account
 def get_database_url(account_type: str) -> str:

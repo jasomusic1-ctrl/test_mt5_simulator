@@ -3,9 +3,11 @@ services:
     name: mt5-simulator
     env: python
     buildCommand: pip install -r requirements.txt
+    postBuildCommand: mkdir -p static && cp frontend.html static/index.html || true
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.18
       - key: PYTHONUNBUFFERED
-        value: true
+        value: "1"
     plan: free
+    startCommand: python main.py
