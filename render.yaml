@@ -1,7 +1,7 @@
 services:
   - type: web
     name: mt5-simulator
-    env: python
+    runtime: python3
     buildCommand: pip install -r requirements.txt
     postBuildCommand: mkdir -p static && cp fetchingAPI.html static/index.html || true
     envVars:
