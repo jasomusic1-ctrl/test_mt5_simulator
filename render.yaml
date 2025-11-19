@@ -2,7 +2,13 @@ services:
   - type: web
     name: mt5-simulator
     runtime: python3
-    buildCommand: export CARGO_HOME=/tmp/cargo && pip install --upgrade pip && pip install --prefer-binary -r requirements.txt
+    buildCommand: |
+      export CARGO_HOME=/tmp/cargo
+      pip install --upgrade pip
+      pip install --prefer-binary fastapi==0.104.1 uvicorn[standard]==0.24.0 sqlalchemy==2.0.23 pydantic==2.5.2
+      pip install --prefer-binary python-multipart==0.0.6 python-dotenv==1.0.0 aiofiles==23.2.1 python-dateutil==2.8.2 pytz==2023.3 numpy==1.26.2 alembic==1.12.1
+      pip install --prefer-binary gunicorn==20.1.0
+      pip install cryptography==41.0.7 python-jose[cryptography]==3.3.0 websockets==12.0 || pip install --no-build-isolation cryptography==41.0.7 python-jose[cryptography]==3.3.0 websockets==12.0
     postBuildCommand: mkdir -p static && cp fetchingAPI.html static/index.html || true
     envVars:
       - key: PYTHON_VERSION
