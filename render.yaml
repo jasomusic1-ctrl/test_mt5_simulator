@@ -5,7 +5,7 @@ services:
     buildCommand: |
       python --version
       pip install --upgrade pip
-      pip install -r requirements.txt
+      pip install --only-binary :all: -r requirements.txt
     postBuildCommand: mkdir -p static && cp fetchingAPI.html static/index.html || true
     envVars:
       - key: PYTHONUNBUFFERED
