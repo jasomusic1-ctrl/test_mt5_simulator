@@ -15,7 +15,7 @@ try:
     import hashlib
     from datetime import datetime, timedelta, timezone
     from typing import List, Dict, Optional
-    from pydantic import BaseModel, Field, field_validator, ValidationInfo, ConfigDict
+    from pydantic import BaseModel, Field, validator, root_validator
     from enum import Enum
     import asyncio
     import json
@@ -192,10 +192,9 @@ class CurrencyPairConfig(BaseModel):
     sell_enabled: bool = Field(True, description="Whether selling is enabled")
     mean_reversion_strength: float = Field(0.05, gt=0, le=1, description="Strength of mean reversion for price simulation")
 
-    @field_validator('sell_starting_price')
-    @classmethod
-    def sell_price_must_be_greater_than_buy(cls, v, info: ValidationInfo):
-        if 'buy_starting_price' in info.data and v <= info.data['buy_starting_price']:
+    @validator('sell_starting_price')
+    def sell_price_must_be_greater_than_buy(v, values):
+        if 'buy_starting_price' in values and v <= values['buy_starting_price']:
             raise ValueError('Sell price must be greater than buy price')
         return v
 
