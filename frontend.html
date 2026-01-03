@@ -11,14 +11,14 @@
             --primary-color: #007bff;
             --text-color: #e0e0e0;
             --text-muted-color: #888;
-            --green-color: #28a745;
+            --green-color: #00bcd4;
             --red-color: #dc3545;
             --orange-color: #ff8800;
             --border-color: #444;
-            --vip-color: #ffd700;
+            --fast-color: #ffd700;
             --demo-color: #00bcd4;
-            --pro-color: #9c27b0;
-            --money-color: #4caf50;
+            --hunter-color: #9c27b0;
+            --livepro-color: #00bcd4;
         }
 
         * { box-sizing: border-box; }
@@ -73,10 +73,10 @@
             font-size: 1em;
         }
 
-        .badge-vip { background-color: var(--vip-color); color: #000; }
+        .badge-fast { background-color: var(--fast-color); color: #000; }
         .badge-demo { background-color: var(--demo-color); color: #fff; }
-        .badge-pro { background-color: var(--pro-color); color: #fff; }
-        .badge-money { background-color: var(--money-color); color: #fff; }
+        .badge-hunter { background-color: var(--hunter-color); color: #fff; }
+        .badge-livepro { background-color: var(--livepro-color); color: #fff; }
 
         .grid-container {
             display: grid;
@@ -167,10 +167,10 @@
             border-width: 3px;
         }
 
-        .account-btn.vip.active { border-color: var(--vip-color); color: var(--vip-color); }
+        .account-btn.fast.active { border-color: var(--fast-color); color: var(--fast-color); }
         .account-btn.demo.active { border-color: var(--demo-color); color: var(--demo-color); }
-        .account-btn.pro.active { border-color: var(--pro-color); color: var(--pro-color); }
-        .account-btn.money.active { border-color: var(--money-color); color: var(--money-color); }
+        .account-btn.hunter.active { border-color: var(--hunter-color); color: var(--hunter-color); }
+        .account-btn.livepro.active { border-color: var(--livepro-color); color: var(--livepro-color); }
 
         table {
             width: 100%;
@@ -336,10 +336,10 @@
             border-left: 4px solid;
         }
 
-        .account-card.vip { border-left-color: var(--vip-color); }
+        .account-card.fast { border-left-color: var(--fast-color); }
         .account-card.demo { border-left-color: var(--demo-color); }
-        .account-card.pro { border-left-color: var(--pro-color); }
-        .account-card.money { border-left-color: var(--money-color); }
+        .account-card.hunter { border-left-color: var(--hunter-color); }
+        .account-card.livepro { border-left-color: var(--livepro-color); }
 
         .header-flex {
             display: flex;
@@ -347,6 +347,53 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 10px;
+        }
+
+        .image-preview-item {
+            margin-bottom: 15px;
+        }
+
+        .image-preview-box {
+            margin-top: 5px;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border: 2px dashed var(--border-color);
+            border-radius: 6px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted-color);
+            overflow: hidden;
+        }
+
+        .image-preview-box img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 4px;
+        }
+
+        input[type="file"] {
+            padding: 8px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        input[type="file"]::-webkit-file-upload-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        input[type="file"]::-webkit-file-upload-button:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -357,7 +404,7 @@
                 <div>
                     <h1>🚀 MT5 Multi-Account Simulator 
                         <span class="badge badge-new">Multi-Account</span>
-                        <span id="current-account-badge" class="badge badge-account badge-vip">VIP</span>
+                        <span id="current-account-badge" class="badge badge-account badge-fast">Fast/Acc</span>
                     </h1>
                     <p style="margin: 0; color: var(--text-muted-color);">Complete Multi-Account Trading Platform</p>
                 </div>
@@ -367,16 +414,16 @@
         <div class="card">
             <h2>💼 Account Switcher</h2>
             <div class="account-switcher">
-                <button class="account-btn vip active" data-account="VIP">🌟 VIP</button>
-                <button class="account-btn demo" data-account="DEMO">🔍 DEMO</button>
-                <button class="account-btn pro" data-account="PRO">⚡ PRO</button>
-                <button class="account-btn money" data-account="MONEY">💰 MONEY</button>
+                <button class="account-btn fast active" data-account="Fast/Acc">🌟 Fast/Acc</button>
+                <button class="account-btn demo" data-account="Demo/Acc">🔍 Demo/Acc</button>
+                <button class="account-btn hunter" data-account="Hunter/Acc">⚡ Hunter/Acc</button>
+                <button class="account-btn livepro" data-account="LivePro/Acc">💰 LivePro/Acc</button>
             </div>
             <button id="view-all-accounts-btn" class="btn-finish">📊 View All Accounts Overview</button>
         </div>
 
         <div class="card">
-            <h2>📊 Account Metrics - <span id="metrics-account-name">VIP</span></h2>
+            <h2>📊 Account Metrics - <span id="metrics-account-name">Fast/Acc</span></h2>
             <div id="account-metrics">
                 <div>Balance <span id="metric-balance">$0.00</span></div>
                 <div>Equity <span id="metric-equity">$0.00</span></div>
@@ -408,8 +455,8 @@
                             <input type="number" id="trade-lot-size" step="0.01" min="0.01" placeholder="e.g., 0.1">
                         </div>
                         <div class="form-group">
-                            <label for="trade-starting-buy-price">Starting Buy Price (Optional, BUY only)</label>
-                            <input type="number" id="trade-starting-buy-price" step="0.00001" placeholder="e.g., 1.1726">
+                            <label for="trade-starting-price">Starting/Opening Price (Optional)</label>
+                            <input type="number" id="trade-starting-price" step="0.00001" placeholder="e.g., 1.1726">
                         </div>
                         <div class="form-group">
                             <label for="trade-target-type">Target Type (Optional)</label>
@@ -469,9 +516,54 @@
                         <button id="set-balance-btn" style="margin-top: 10px;">Set Balance</button>
                     </div>
                     <hr style="border-color: var(--border-color);">
-                    <button id="deposit-btn" class="btn-finish">Deposit $300.00</button>
+                    <div class="form-group">
+                        <label for="deposit-amount">Deposit Amount</label>
+                        <input type="number" id="deposit-amount" placeholder="0" step="0.01" min="0" value="0">
+                        <button id="deposit-btn" class="btn-finish" style="margin-top: 10px;">Deposit</button>
+                    </div>
                     <hr style="border-color: var(--border-color);">
                     <button id="reset-account-btn" class="btn-danger">Reset Account & Trades</button>
+                </div>
+
+                <div class="card">
+                    <h3>🖼️ Profile Images <span class="badge badge-new">NEW</span></h3>
+                    <div class="info-box info-box-warning">
+                        <strong>📸 Upload Images:</strong> Upload images for Chats, Messages, and Quotes. New uploads replace previous images.
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="image-category">Category</label>
+                        <select id="image-category">
+                            <option value="chats">💬 Chats</option>
+                            <option value="messages">📧 Messages</option>
+                            <option value="quotes">💭 Quotes</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="image-file">Select Image</label>
+                        <input type="file" id="image-file" accept="image/*">
+                    </div>
+                    
+                    <button id="upload-image-btn" class="btn-finish">📤 Upload Image</button>
+                    
+                    <hr style="border-color: var(--border-color); margin: 20px 0;">
+                    
+                    <h4 style="margin-bottom: 10px;">Current Images</h4>
+                    <div id="profile-images-preview">
+                        <div class="image-preview-item">
+                            <strong>💬 Chats:</strong>
+                            <div id="preview-chats" class="image-preview-box">No image uploaded</div>
+                        </div>
+                        <div class="image-preview-item">
+                            <strong>📧 Messages:</strong>
+                            <div id="preview-messages" class="image-preview-box">No image uploaded</div>
+                        </div>
+                        <div class="image-preview-item">
+                            <strong>💭 Quotes:</strong>
+                            <div id="preview-quotes" class="image-preview-box">No image uploaded</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -494,6 +586,49 @@
                         <tbody></tbody>
                     </table>
                 </div>
+                <div class="card">
+                    <h3>📊 Sum in Exness - Currency Pair Stats</h3>
+                    <button id="refresh-exness-btn" class="btn-small btn-finish" style="margin-bottom: 10px;">🔄 Refresh</button>
+                    <table id="exness-stats-table">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Active Trades</th>
+                                <th>Running P/L</th>
+                                <th>Lowest Price</th>
+                                <th>Highest Price</th>
+                                <th>Completed Today</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>📅 Profits & Losses by Date</h3>
+                    <button id="refresh-daily-pnl-btn" class="btn-small btn-finish" style="margin-bottom: 10px;">🔄 Refresh</button>
+                    <div id="daily-pnl-summary" style="margin-bottom: 15px; padding: 10px; background-color: var(--bg-color); border-radius: 6px;">
+                        <strong>Overall:</strong> 
+                        <span id="overall-profit" class="profit">Profit: $0.00</span> | 
+                        <span id="overall-loss" class="loss">Loss: $0.00</span> | 
+                        <span id="overall-net">Net: $0.00</span> | 
+                        <span id="overall-trades">Trades: 0</span>
+                    </div>
+                    <table id="daily-pnl-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Profit</th>
+                                <th>Loss</th>
+                                <th>Net P/L</th>
+                                <th>Trades</th>
+                                <th>Win/Loss</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
                 <div class="card">
                     <h3>📜 Historical Trades</h3>
                     <button id="refresh-historical-btn" class="btn-small btn-finish" style="margin-bottom: 10px;">🔄 Refresh</button>
@@ -657,15 +792,14 @@
     <script>
         // API and WebSocket configuration
         const getApiUrls = () => {
-            // Always connect to the backend server directly
-            const host = window.location.hostname || 'localhost';
-            const port = window.location.port || '8002';
+            // Use the same origin as the page (served from port 8080)
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const httpProtocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+            const httpProtocol = window.location.protocol;
+            const host = window.location.host; // includes port if present
             
             return {
-                apiBaseUrl: `${httpProtocol}//${host}:${port}`,
-                wsBaseUrl: `${protocol}//${host}:${port}`  // Match the backend server port
+                apiBaseUrl: `${httpProtocol}//${host}`,
+                wsBaseUrl: `${protocol}//${host}`
             };
         };
 
@@ -675,7 +809,7 @@
             apiBaseUrl: urls.apiBaseUrl,
             wsBaseUrl: urls.wsBaseUrl,
             clientId: `client_${Date.now()}`,
-            currentAccount: 'VIP',
+            currentAccount: 'Fast/Acc',
             reconnectAttempts: 0,
             maxReconnectAttempts: 5
         };
@@ -698,7 +832,15 @@
             const metricsName = document.getElementById('metrics-account-name');
             badge.textContent = account;
             metricsName.textContent = account;
-            badge.className = `badge badge-account badge-${account.toLowerCase()}`;
+            // Map account names to CSS class names
+            const classMap = {
+                'Fast/Acc': 'fast',
+                'Demo/Acc': 'demo',
+                'Hunter/Acc': 'hunter',
+                'LivePro/Acc': 'livepro'
+            };
+            const cssClass = classMap[account] || account.toLowerCase().replace('/', '');
+            badge.className = `badge badge-account badge-${cssClass}`;
         };
 
         const updateAccountMetricsUI = (metrics) => {
@@ -789,6 +931,89 @@
             });
         };
 
+        const renderExnessStats = (data) => {
+            const tbody = document.querySelector('#exness-stats-table tbody');
+            tbody.innerHTML = '';
+            
+            if (!data.currency_pair_stats) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted-color);">No data available</td></tr>';
+                return;
+            }
+            
+            for (const [symbol, stats] of Object.entries(data.currency_pair_stats)) {
+                const pnlClass = stats.running_profit_loss_sum >= 0 ? 'profit' : 'loss';
+                const lowestPrice = stats.lowest_current_price !== null ? stats.lowest_current_price.toFixed(5) : '—';
+                const highestPrice = stats.highest_current_price !== null ? stats.highest_current_price.toFixed(5) : '—';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${symbol}</strong></td>
+                    <td>${stats.active_trade_count}</td>
+                    <td class="${pnlClass}">${formatCurrency(stats.running_profit_loss_sum)}</td>
+                    <td>${lowestPrice}</td>
+                    <td>${highestPrice}</td>
+                    <td>${stats.completed_trades_today}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        };
+
+        const renderDailyPnL = (data) => {
+            const tbody = document.querySelector('#daily-pnl-table tbody');
+            tbody.innerHTML = '';
+            
+            // Update overall summary
+            if (data.overall_summary) {
+                document.getElementById('overall-profit').textContent = `Profit: ${formatCurrency(data.overall_summary.total_profit)}`;
+                document.getElementById('overall-loss').textContent = `Loss: ${formatCurrency(data.overall_summary.total_loss)}`;
+                const netClass = data.overall_summary.net_profit_loss >= 0 ? 'profit' : 'loss';
+                document.getElementById('overall-net').textContent = `Net: ${formatCurrency(data.overall_summary.net_profit_loss)}`;
+                document.getElementById('overall-net').className = netClass;
+                document.getElementById('overall-trades').textContent = `Trades: ${data.overall_summary.total_trades}`;
+            }
+            
+            if (!data.daily_stats || data.daily_stats.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted-color);">No completed trades</td></tr>';
+                return;
+            }
+            
+            // Render in reverse chronological order (most recent first)
+            const sortedStats = [...data.daily_stats].reverse();
+            
+            for (const day of sortedStats) {
+                const netClass = day.net_profit_loss >= 0 ? 'profit' : 'loss';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${day.date}</strong></td>
+                    <td class="profit">${formatCurrency(day.total_profit)}</td>
+                    <td class="loss">${formatCurrency(day.total_loss)}</td>
+                    <td class="${netClass}">${formatCurrency(day.net_profit_loss)}</td>
+                    <td>${day.trade_count}</td>
+                    <td>${day.profitable_trades}/${day.losing_trades}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        };
+
+        const fetchExnessStats = async () => {
+            try {
+                const data = await apiFetch('/api/sum-in-exness');
+                renderExnessStats(data);
+            } catch (error) {
+                console.error('Error fetching Exness stats:', error);
+            }
+        };
+
+        const fetchDailyPnL = async () => {
+            try {
+                const data = await apiFetch('/api/profits-losses-by-date');
+                renderDailyPnL(data);
+            } catch (error) {
+                console.error('Error fetching daily P/L:', error);
+            }
+        };
+
         const apiFetch = async (endpoint, options = {}) => {
             const headers = {
                 'Content-Type': 'application/json',
@@ -822,9 +1047,26 @@
                 updateAccountMetricsUI(metrics);
                 renderActiveTrades(active);
                 renderHistoricalTrades(historical);
+                
+                // Fetch new stats
+                await fetchExnessStats();
+                await fetchDailyPnL();
 
                 const symbolSelect = document.getElementById('trade-symbol');
+                const previousSymbol = symbolSelect.value; // Preserve current selection
                 symbolSelect.innerHTML = Object.keys(pairs.data).map(symbol => `<option value="${symbol}">${symbol}</option>`).join('');
+                // Restore previous selection, or use saved value, or default to EURUSD
+                if (previousSymbol && Array.from(symbolSelect.options).some(opt => opt.value === previousSymbol)) {
+                    symbolSelect.value = previousSymbol;
+                } else {
+                    const saved = localStorage.getItem('mt5_trade_form_values');
+                    const savedSymbol = saved ? JSON.parse(saved).symbol : null;
+                    if (savedSymbol && Array.from(symbolSelect.options).some(opt => opt.value === savedSymbol)) {
+                        symbolSelect.value = savedSymbol;
+                    } else if (Array.from(symbolSelect.options).some(opt => opt.value === 'EURUSD')) {
+                        symbolSelect.value = 'EURUSD';
+                    }
+                }
                 
                 const timezoneSelect = document.getElementById('timezone-select');
                 timezoneSelect.value = timezone.timezone;
@@ -864,9 +1106,18 @@
                 const container = document.getElementById('accounts-overview');
                 container.innerHTML = '';
                 
+                // Map account names to CSS class names
+                const classMap = {
+                    'Fast/Acc': 'fast',
+                    'Demo/Acc': 'demo',
+                    'Hunter/Acc': 'hunter',
+                    'LivePro/Acc': 'livepro'
+                };
+                
                 for (const [accountType, info] of Object.entries(result.accounts)) {
                     const card = document.createElement('div');
-                    card.className = `account-card ${accountType.toLowerCase()}`;
+                    const cssClass = classMap[accountType] || accountType.toLowerCase().replace('/', '');
+                    card.className = `account-card ${cssClass}`;
                     card.innerHTML = `
                         <h3>${accountType}</h3>
                         <p><strong>Balance:</strong> ${formatCurrency(info.balance)}</p>
@@ -954,6 +1205,20 @@
                         case 'pong':
                             // Heartbeat response
                             break;
+                        case 'profile_image_updated':
+                            logMessage(`Profile image ${data.action} for ${data.category}`, 'success');
+                            loadProfileImages(); // Reload all images
+                            break;
+                        case 'profile_image_deleted':
+                            logMessage(`Profile image deleted for ${data.category}`, 'success');
+                            loadProfileImages(); // Reload all images
+                            break;
+                        case 'exness_stats_update':
+                            // Real-time Exness stats update via WebSocket
+                            if (data.account_type === state.currentAccount) {
+                                renderExnessStats(data);
+                            }
+                            break;
                     }
                 } catch (error) {
                     console.error('WebSocket message error:', error);
@@ -1011,6 +1276,7 @@
 
         const deleteTrade = async (tradeId) => {
             if (!confirm(`Permanently delete trade ${tradeId}? This cannot be undone!`)) return;
+            
             try {
                 const result = await apiFetch(`/api/trades/${tradeId}`, { method: 'DELETE' });
                 logMessage(result.message, 'success');
@@ -1046,14 +1312,14 @@
             const symbol = document.getElementById('trade-symbol').value;
             const direction = document.getElementById('trade-direction').value;
             const lotSize = document.getElementById('trade-lot-size').value;
-            const startingBuyPrice = document.getElementById('trade-starting-buy-price').value;
+            const startingPrice = document.getElementById('trade-starting-price').value;
             const targetType = document.getElementById('trade-target-type').value;
             const targetAmount = document.getElementById('trade-target-amount').value;
             
             const payload = {
                 direction,
                 lot_size: lotSize ? parseFloat(lotSize) : null,
-                starting_buy_price: startingBuyPrice ? parseFloat(startingBuyPrice) : null,
+                starting_price: startingPrice ? parseFloat(startingPrice) : null,
                 target_type: targetType || null,
                 target_amount: targetAmount ? parseFloat(targetAmount) : null
             };
@@ -1065,7 +1331,7 @@
                 });
                 logMessage(result.message, 'success');
                 await fetchInitialData();
-                e.target.reset();
+                // Form values retained - no reset
             } catch (error) {
                 logMessage(`Failed to start trade: ${error.message}`, 'error');
             }
@@ -1205,6 +1471,10 @@
 
         document.getElementById('refresh-historical-btn').addEventListener('click', fetchInitialData);
 
+        document.getElementById('refresh-exness-btn').addEventListener('click', fetchExnessStats);
+
+        document.getElementById('refresh-daily-pnl-btn').addEventListener('click', fetchDailyPnL);
+
         document.getElementById('verify-license-btn').addEventListener('click', async () => {
             const licenseKey = document.getElementById('license-key').value;
             try {
@@ -1239,7 +1509,15 @@
 
         document.getElementById('deposit-btn').addEventListener('click', async () => {
             try {
-                const result = await apiFetch('/api/account/deposit', { method: 'POST' });
+                const amount = parseFloat(document.getElementById('deposit-amount').value || '0');
+                if (Number.isNaN(amount) || amount < 0) {
+                    logMessage('Please enter a valid deposit amount (0 or more)', 'error');
+                    return;
+                }
+                const result = await apiFetch('/api/account/deposit', {
+                    method: 'POST',
+                    body: JSON.stringify({ amount })
+                });
                 logMessage(result.message, 'success');
                 await fetchInitialData();
             } catch (error) {
@@ -1311,10 +1589,163 @@
             }
         });
 
+        // Profile Image Functions
+        async function loadProfileImages() {
+            try {
+                const result = await apiFetch('/api/profile/images/all');
+                
+                // Update preview boxes
+                ['chats', 'messages', 'quotes'].forEach(category => {
+                    const previewBox = document.getElementById(`preview-${category}`);
+                    if (result.images && result.images[category]) {
+                        const imageData = result.images[category].image_data;
+                        previewBox.innerHTML = `<img src="${imageData}" alt="${category}">`;
+                    } else {
+                        previewBox.innerHTML = 'No image uploaded';
+                    }
+                });
+            } catch (error) {
+                console.log('No profile images found or error loading:', error.message);
+            }
+        }
+
+        async function uploadProfileImage(category, file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch(`${state.apiBaseUrl}/api/profile/upload/${category}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Upload failed');
+                }
+                
+                const result = await response.json();
+                logMessage(`Image ${result.action} for ${category}`, 'success');
+                
+                // Update preview immediately
+                await loadProfileImages();
+                
+                return result;
+            } catch (error) {
+                logMessage(`Failed to upload image: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        // Image Upload Event Listener
+        document.getElementById('upload-image-btn').addEventListener('click', async () => {
+            const category = document.getElementById('image-category').value;
+            const fileInput = document.getElementById('image-file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                logMessage('Please select an image file', 'error');
+                return;
+            }
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                logMessage('Please select a valid image file', 'error');
+                return;
+            }
+            
+            try {
+                await uploadProfileImage(category, file);
+                fileInput.value = ''; // Clear file input
+            } catch (error) {
+                console.error('Upload error:', error);
+            }
+        });
+
+        // ========== TRADE FORM PERSISTENCE ==========
+        // Save form field values to localStorage so they persist between trades
+        const TRADE_FORM_STORAGE_KEY = 'mt5_trade_form_values';
+
+        function saveTradeFormValues() {
+            const formValues = {
+                symbol: document.getElementById('trade-symbol').value,
+                direction: document.getElementById('trade-direction').value,
+                lotSize: document.getElementById('trade-lot-size').value,
+                startingPrice: document.getElementById('trade-starting-price').value,
+                targetType: document.getElementById('trade-target-type').value,
+                targetAmount: document.getElementById('trade-target-amount').value
+            };
+            localStorage.setItem(TRADE_FORM_STORAGE_KEY, JSON.stringify(formValues));
+        }
+
+        function loadTradeFormValues() {
+            try {
+                const saved = localStorage.getItem(TRADE_FORM_STORAGE_KEY);
+                const symbolSelect = document.getElementById('trade-symbol');
+                const formValues = saved ? JSON.parse(saved) : null;
+                
+                // Set symbol - use saved value or default to EURUSD
+                const symbolToSet = (formValues && formValues.symbol) ? formValues.symbol : 'EURUSD';
+                const optionExists = Array.from(symbolSelect.options).some(opt => opt.value === symbolToSet);
+                if (optionExists) {
+                    symbolSelect.value = symbolToSet;
+                }
+                
+                // Load other saved values if they exist
+                if (formValues) {
+                    if (formValues.direction) {
+                        document.getElementById('trade-direction').value = formValues.direction;
+                    }
+                    if (formValues.lotSize) {
+                        document.getElementById('trade-lot-size').value = formValues.lotSize;
+                    }
+                    if (formValues.startingPrice || formValues.startingBuyPrice) {
+                        document.getElementById('trade-starting-price').value = formValues.startingPrice || formValues.startingBuyPrice;
+                    }
+                    if (formValues.targetType) {
+                        document.getElementById('trade-target-type').value = formValues.targetType;
+                    }
+                    if (formValues.targetAmount) {
+                        document.getElementById('trade-target-amount').value = formValues.targetAmount;
+                    }
+                    
+                    console.log('Trade form values restored from localStorage');
+                }
+            } catch (error) {
+                console.error('Error loading trade form values:', error);
+            }
+        }
+
+        // Add event listeners to save form values on change
+        function setupTradeFormPersistence() {
+            const formFields = [
+                'trade-symbol',
+                'trade-direction', 
+                'trade-lot-size',
+                'trade-starting-price',
+                'trade-target-type',
+                'trade-target-amount'
+            ];
+            
+            formFields.forEach(fieldId => {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                    element.addEventListener('change', saveTradeFormValues);
+                    element.addEventListener('input', saveTradeFormValues);
+                }
+            });
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
             logMessage('Initializing application...', 'info');
             await fetchInitialData();
+            await loadProfileImages(); // Load profile images on startup
+            
+            // Setup trade form persistence and load saved values
+            setupTradeFormPersistence();
+            loadTradeFormValues();
+            
             connectWebSocket();
         });
     </script>

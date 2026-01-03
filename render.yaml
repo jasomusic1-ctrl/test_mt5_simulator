@@ -2,15 +2,17 @@ services:
   - type: web
     name: mt5-simulator
     runtime: python
+    region: oregon
+    plan: free
     buildCommand: |
       python --version
       pip install --upgrade pip
-      pip install --only-binary :all: -r requirements.txt
-    postBuildCommand: mkdir -p static && cp fetchingAPI.html static/index.html || true
+      pip install -r requirements.txt
+    startCommand: gunicorn fin:app --worker-class uvicorn.workers.UvicornWorker --workers 1 --bind 0.0.0.0:$PORT --timeout 120
     envVars:
       - key: PYTHONUNBUFFERED
         value: "1"
       - key: RENDER
         value: "true"
-    plan: free
-    startCommand: gunicorn main:app --worker-class uvicorn.workers.UvicornWorker --workers 4 --bind 0.0.0.0:$PORT
+      - key: PYTHON_VERSION
+        value: "3.9.18"
