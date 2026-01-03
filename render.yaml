@@ -2,6 +2,8 @@ services:
   - type: web
     name: mt5-simulator
     runtime: python
+    python:
+      version: "3.9.18"
     region: oregon
     plan: free
     buildCommand: |
