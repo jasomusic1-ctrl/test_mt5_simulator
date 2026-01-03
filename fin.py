@@ -566,11 +566,11 @@ async def account_simulate_trades(account_type: str):
                     
                     if existing_trade:
                         # Update existing trade
-                        for key, value in trade.model_dump().items():
+                        for key, value in trade.dict().items():
                             setattr(existing_trade, key, value)
                     else:
                         # Insert new trade
-                        db_trade = TradeDataDB(**trade.model_dump())
+                        db_trade = TradeDataDB(**trade.dict())
                         db.add(db_trade)
                     
                     db.commit()
@@ -742,11 +742,11 @@ async def transfer_completed_trades_to_database(account_type: str, trade_id: str
                     if existing_trade:
                         # Only update if the trade is still RUNNING in database
                         if existing_trade.status == TradeStatus.RUNNING:
-                            for key, value in trade.model_dump().items():
+                            for key, value in trade.dict().items():
                                 setattr(existing_trade, key, value)
                     else:
                         # Insert new trade
-                        db_trade = TradeDataDB(**trade.model_dump())
+                        db_trade = TradeDataDB(**trade.dict())
                         db.add(db_trade)
                     
                     trades_to_remove.append(tid)
@@ -809,11 +809,11 @@ async def auto_save_trades_to_database(account_type: str):
                     if existing_trade:
                         # For existing trades, only update if they're RUNNING in database
                         if existing_trade.status == TradeStatus.RUNNING:
-                            for key, value in trade.model_dump().items():
+                            for key, value in trade.dict().items():
                                 setattr(existing_trade, key, value)
                     else:
                         # Insert new trade snapshot
-                        db_trade = TradeDataDB(**trade.model_dump())
+                        db_trade = TradeDataDB(**trade.dict())
                         db.add(db_trade)
                 
                 db.commit()
@@ -874,7 +874,7 @@ async def broadcast_trade_update(account_type: str, trade: TradeData):
         "target_type": trade.target_type,
         "target_amount": trade.target_amount,
         "timestamp": current_time.strftime(f"%Y-%m-%d %H:%M:%S {SYSTEM_TIMEZONE}"),
-        "account_metrics": account_metrics.model_dump()
+        "account_metrics": account_metrics.dict()
     }))
 
 # API Endpoints
@@ -982,7 +982,7 @@ async def switch_account(request: SwitchAccountRequest):
         "message": f"Switched to {request.account_type} account",
         "old_account": old_account,
         "new_account": request.account_type,
-        "account_metrics": account_metrics_store[request.account_type].model_dump()
+        "account_metrics": account_metrics_store[request.account_type].dict()
     }
 
 @app.get("/api/accounts/list")
@@ -1081,7 +1081,7 @@ async def get_currency_pairs():
     account_type = session_state.get("current_account", "Fast/Acc")
     currency_pair_settings = currency_pair_settings_store[account_type]
     return ResponseModel(
-        data={k: v.model_dump() for k, v in currency_pair_settings.items()},
+        data={k: v.dict() for k, v in currency_pair_settings.items()},
         message=f"Currency pairs retrieved for {account_type} account"
     )
 
@@ -1120,7 +1120,7 @@ async def list_historical_trades(symbol: Optional[str] = None):
         # Nulls are placed last in SQLite by default with desc()
         query = query.order_by(TradeDataDB.end_time.desc(), TradeDataDB.start_time.desc())
         trades = query.all()
-        return [TradeData(**{k: getattr(t, k) for k in TradeData.model_fields}) for t in trades]
+        return [TradeData(**{k: getattr(t, k) for k in TradeData.__fields__}) for t in trades]
 
 @app.get("/api/trades/{trade_id}", response_model=TradeData)
 async def get_trade(trade_id: str):
@@ -1134,7 +1134,7 @@ async def get_trade(trade_id: str):
     with SessionLocal() as db:
         trade = db.query(TradeDataDB).filter(TradeDataDB.trade_id == trade_id).first()
         if trade:
-            return TradeData(**{k: getattr(trade, k) for k in TradeData.model_fields})
+            return TradeData(**{k: getattr(trade, k) for k in TradeData.__fields__})
     raise HTTPException(status_code=404, detail="Trade not found")
 
 @app.get("/api/trades/{trade_id}/details")
@@ -1150,7 +1150,7 @@ async def get_trade_details(trade_id: str):
     with SessionLocal() as db:
         trade = db.query(TradeDataDB).filter(TradeDataDB.trade_id == trade_id).first()
         if trade:
-            return {"trade": TradeData(**{k: getattr(trade, k) for k in TradeData.model_fields}), "is_active": False, "account_type": account_type, "message": "Historical trade details retrieved"}
+            return {"trade": TradeData(**{k: getattr(trade, k) for k in TradeData.__fields__}), "is_active": False, "account_type": account_type, "message": "Historical trade details retrieved"}
     raise HTTPException(status_code=404, detail="Trade not found")
 
 @app.get("/api/summary/trades")
@@ -1168,7 +1168,7 @@ async def get_trades_summary():
         historical_trades_db = db.query(TradeDataDB).filter(
             TradeDataDB.status.in_([TradeStatus.COMPLETED, TradeStatus.STOPPED])
         ).order_by(TradeDataDB.end_time.desc(), TradeDataDB.start_time.desc()).all()
-        historical_trade_list = [TradeData(**{k: getattr(t, k) for k in TradeData.model_fields}) for t in historical_trades_db]
+        historical_trade_list = [TradeData(**{k: getattr(t, k) for k in TradeData.__fields__}) for t in historical_trades_db]
     
     # Sort active trades by start_time ascending (oldest first)
     active_trade_list.sort(key=lambda t: t.start_time, reverse=False)
@@ -1389,7 +1389,7 @@ async def get_account_summary():
     
     return {
         "account_type": account_type,
-        "account_metrics": account_metrics.model_dump(),
+        "account_metrics": account_metrics.dict(),
         "trading_summary": {
             "active_trades_count": active_trade_count,
             "total_lot_size_active": round(total_lot_size, 2),
@@ -1399,8 +1399,6 @@ async def get_account_summary():
     }
 
 class UpdateTradeRequest(BaseModel):
-    model_config = ConfigDict(json_encoders={datetime: lambda v: v.isoformat()})
-    
     entry_price: Optional[float] = Field(None, description="New entry price")
     closing_price: Optional[float] = Field(None, description="New closing price")
     start_time: Optional[datetime] = Field(None, description="New start time (timezone-naive)")
@@ -1486,7 +1484,7 @@ async def update_historical_trade(trade_id: str, request: UpdateTradeRequest):
         db.commit()
         db.refresh(trade_db)
         
-        updated_trade = TradeData(**{k: getattr(trade_db, k) for k in TradeData.model_fields})
+        updated_trade = TradeData(**{k: getattr(trade_db, k) for k in TradeData.__fields__})
         
         print(f"Trade {trade_id} updated in {account_type}: {', '.join(updates)}")
         
@@ -1537,14 +1535,14 @@ async def recalculate_trade_pnl(trade_id: str):
         
         print(f"Trade {trade_id} recalculated in {account_type}: P&L {old_pnl:.2f} → {calculated_pnl:.2f}")
         
-        updated_trade = TradeData(**{k: getattr(trade_db, k) for k in TradeData.model_fields})
+        updated_trade = TradeData(**{k: getattr(trade_db, k) for k in TradeData.__fields__})
         await manager.broadcast(json.dumps({
             "type": "trade_database_updated",
             "account_type": account_type,
             "trade_id": trade_id,
             "updates": ["profit_loss"],
             "timestamp": get_current_time_in_timezone().strftime(f"%Y-%m-%d %H:%M:%S {SYSTEM_TIMEZONE}"),
-            "trade": updated_trade.model_dump()
+            "trade": updated_trade.dict()
         }))
         
         return {"status": "success", "message": "P&L recalculated successfully", "account_type": account_type, "old_pnl": round(old_pnl, 2), "new_pnl": round(calculated_pnl, 2), "trade_id": trade_id, "trade": updated_trade}
