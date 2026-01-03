@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="8dp"
+    android:gravity="center_vertical"
+    android:background="#F5F5F5">
+
+    <!-- Date Text -->
+    <TextView
+        android:id="@+id/tvDateHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Yesterday, 22 December"
+        android:textColor="#1F2937"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        android:fontFamily="sans-serif" />
+
+    <!-- Daily P/L Sum -->
+    <TextView
+        android:id="@+id/tvDailyProfitLoss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-14.64 USD"
+        android:textColor="#EF4444"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        android:fontFamily="sans-serif" />
+
+</LinearLayout>

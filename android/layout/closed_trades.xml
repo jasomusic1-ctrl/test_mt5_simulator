@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    android:background="@android:color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Currency Pair Flags Container -->
+        <FrameLayout
+            android:id="@+id/fl_currency_flags"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Base Currency Flag (Back/Left) -->
+            <ImageView
+                android:id="@+id/iv_flag_base"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="start|center_vertical"
+                android:contentDescription="Base currency flag"
+                android:src="@drawable/eng" />
+
+            <!-- Quote Currency Flag (Front/Right) -->
+            <ImageView
+                android:id="@+id/iv_flag_quote"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="end|bottom"
+                android:contentDescription="Quote currency flag"
+                android:src="@drawable/usa" />
+        </FrameLayout>
+
+        <!-- Currency Pair Name (Next to flags) -->
+        <TextView
+            android:id="@+id/tv_currency_pair"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/fl_currency_flags"
+            app:layout_constraintTop_toTopOf="@id/fl_currency_flags"
+            app:layout_constraintBottom_toBottomOf="@id/fl_currency_flags"
+            app:layout_constraintEnd_toStartOf="@id/tv_pnl_amount"
+            tools:text="USD/JPY" />
+
+        <!-- Trade Action (Buy/Sell) and Lot Size (Below flags) -->
+        <TextView
+            android:id="@+id/tv_trade_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fl_currency_flags"
+            tools:text="Buy 0.01 lot" />
+
+        <!-- Entry Price Label -->
+        <TextView
+            android:id="@+id/tv_entry_price_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="at"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginStart="4dp"
+            app:layout_constraintStart_toEndOf="@id/tv_trade_action"
+            app:layout_constraintTop_toTopOf="@id/tv_trade_action"
+            app:layout_constraintBottom_toBottomOf="@id/tv_trade_action" />
+
+        <!-- Entry Price -->
+        <TextView
+            android:id="@+id/tv_entry_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/tv_entry_price_label"
+            app:layout_constraintTop_toTopOf="@id/tv_trade_action"
+            app:layout_constraintBottom_toBottomOf="@id/tv_trade_action"
+            tools:text="157.363" />
+
+        <!-- P&L Amount (Top right, aligned with currency pair) -->
+        <TextView
+            android:id="@+id/tv_pnl_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_currency_pair"
+            app:layout_constraintBottom_toBottomOf="@id/tv_currency_pair"
+            tools:text="-0.03 USD"
+            tools:textColor="#F44336" />
+
+        <!-- Current Price (Bottom right, aligned with trade action) -->
+        <TextView
+            android:id="@+id/tv_current_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_trade_action"
+            app:layout_constraintBottom_toBottomOf="@id/tv_trade_action"
+            tools:text="157.358" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

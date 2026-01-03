@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#FFFFFF">
+
+    <!-- Left border indicator -->
+    <View
+        android:id="@+id/leftBorderIndicator"
+        android:layout_width="3dp"
+        android:layout_height="match_parent"
+        android:background="#E5E7EB" />
+
+    <!-- Trade content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp">
+
+        <!-- Top Row: Currency Icon, Pair and P&L -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+
+            <!-- Currency Icon (Combined Flag) -->
+            <FrameLayout
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="top">
+
+                <!-- Base Currency Flag -->
+                <ImageView
+                    android:id="@+id/ivBaseCurrencyFlag"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="start|top"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/usa" />
+
+                <!-- Quote Currency Flag -->
+                <ImageView
+                    android:id="@+id/ivQuoteCurrencyFlag"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="end|bottom"
+                    android:src="@drawable/eng"
+                    android:scaleType="centerCrop" />
+
+            </FrameLayout>
+
+            <!-- Currency Pair Name -->
+            <TextView
+                android:id="@+id/tvCurrencyPair"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="XAU/USD"
+                android:textColor="#1F2937"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
+
+            <!-- P&L Amount -->
+            <TextView
+                android:id="@+id/tvPnL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+44.92 USD"
+                android:textColor="#10B981"
+                android:textSize="16sp"
+                android:textStyle="normal"
+                android:fontFamily="sans-serif" />
+
+        </LinearLayout>
+
+        <!-- Bottom Row: Trade Details and Exit Price -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="42dp">
+
+            <!-- Trade Action, Lot Size and Entry Price -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvTradeAction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Buy"
+                    android:textColor="#3B82F6"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" "
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvLotSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.10 lot"
+                    android:textColor="#3B82F6"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" at "
+                    android:textColor="#6B7280"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif" />
+
+                <TextView
+                    android:id="@+id/tvEntryPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4529.661"
+                    android:textColor="#1F2937"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif" />
+
+            </LinearLayout>
+
+            <!-- Exit/Close Price -->
+            <TextView
+                android:id="@+id/tvExitPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4534.153"
+                android:textColor="#9CA3AF"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

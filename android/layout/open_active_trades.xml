@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    android:background="#FFFFFF">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Currency Pair Flags -->
+        <FrameLayout
+            android:id="@+id/flagsContainer"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- US Flag (Back) -->
+            <ImageView
+                android:id="@+id/ivFlagBase"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="start|center_vertical"
+                android:src="@drawable/usa"
+                android:contentDescription="US Flag" />
+
+            <!-- Japan Flag (Front) -->
+            <ImageView
+                android:id="@+id/ivFlagQuote"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="end|bottom"
+                android:src="@drawable/eng"
+                android:contentDescription="Japan Flag" />
+        </FrameLayout>
+
+        <!-- Currency Pair Text -->
+        <TextView
+            android:id="@+id/tvCurrencyPair"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="USD/JPY"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/flagsContainer"
+            app:layout_constraintStart_toEndOf="@id/flagsContainer"
+            app:layout_constraintTop_toTopOf="@id/flagsContainer" />
+
+        <!-- Position Count Badge -->
+        <TextView
+            android:id="@+id/tvPositionCount"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/circle_badge_blue"
+            android:gravity="center"
+            android:text="5"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/tvCurrencyPair"
+            app:layout_constraintStart_toEndOf="@id/tvCurrencyPair"
+            app:layout_constraintTop_toTopOf="@id/tvCurrencyPair" />
+
+        <!-- P/L Amount -->
+        <TextView
+            android:id="@+id/tvProfitLoss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-6.17 USD"
+            android:textColor="#E53935"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/tvCurrencyPair"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvCurrencyPair" />
+
+        <!-- Buy/Sell Information -->
+        <TextView
+            android:id="@+id/tvBuyInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Buy 0.04 lot"
+            android:textColor="#2196F3"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/flagsContainer" />
+
+        <TextView
+            android:id="@+id/tvSellInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Sell 0.01 lot"
+            android:textColor="#E53935"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/tvBuyInfo"
+            app:layout_constraintStart_toEndOf="@id/tvBuyInfo"
+            app:layout_constraintTop_toTopOf="@id/tvBuyInfo" />
+
+        <!-- Lowest/Highest Price Row -->
+        <LinearLayout
+            android:id="@+id/priceRangeContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvBuyInfo">
+
+            <TextView
+                android:id="@+id/tvLowestLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lowest: "
+                android:textColor="#757575"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvLowestPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.00000"
+                android:textColor="#E53935"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Highest: "
+                android:textColor="#757575"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvHighestPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.00000"
+                android:textColor="#4CAF50"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
