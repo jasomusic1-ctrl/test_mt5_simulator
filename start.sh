@@ -12,4 +12,4 @@ pip install -r requirements.txt
 alembic upgrade head
 
 # Start the application
-exec gunicorn frn:app --worker-class uvicorn.workers.UvicornWorker --workers 4 --bind 0.0.0.0:$PORT
+exec uvicorn fin:app --host 0.0.0.0 --port $PORT
