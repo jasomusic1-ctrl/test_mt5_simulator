@@ -282,7 +282,9 @@ def initialize_account_databases():
         # For SQLite in production, ensure the directory exists
         if os.getenv('RENDER') and db_url.startswith('sqlite'):
             db_path = db_url.replace('sqlite:///', '')
-            os.makedirs(os.path.dirname(db_path), exist_ok=True)
+            db_dir = os.path.dirname(db_path)
+            if db_dir:
+                os.makedirs(db_dir, exist_ok=True)
             
         connect_args = {"check_same_thread": False} if db_url.startswith('sqlite') else {}
         engine = create_engine(db_url, connect_args=connect_args)
@@ -315,7 +317,9 @@ def get_profile_database_url() -> str:
 profile_db_url = get_profile_database_url()
 if os.getenv('RENDER') and profile_db_url.startswith('sqlite'):
     db_path = profile_db_url.replace('sqlite:///', '')
-    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+    db_dir = os.path.dirname(db_path)
+    if db_dir:
+        os.makedirs(db_dir, exist_ok=True)
 
 connect_args = {"check_same_thread": False} if profile_db_url.startswith('sqlite') else {}
 profile_engine = create_engine(profile_db_url, connect_args=connect_args)
